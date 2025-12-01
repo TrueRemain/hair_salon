@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Отзыв отправлен - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="review-hero">
+    <div class="container">
+        <h1>Спасибо за ваш отзыв!</h1>
+        <p>Ваше мнение очень важно для нас</p>
+    </div>
+</section>
+
+<section class="review-form-section">
+    <div class="container">
+        <div class="review-form-container" style="text-align: center;">
+            <div class="success-icon" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 2rem;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 style="margin-bottom: 1rem;">Отзыв успешно отправлен</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-light);">
+                Ваш отзыв был опубликован на сайте. Благодарим за обратную связь!
+            </p>
+            <div class="cta-buttons">
+                <a href="{% url 'index' %}" class="cta-button">
+                    <i class="fas fa-home"></i>
+                    На главную
+                </a>
+                <!--<a href="{% url 'reviews:add_review' %}" class="cta-button secondary">
+                    <i class="fas fa-plus"></i>
+                    Оставить еще отзыв
+                </a>-->
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-button.secondary {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.cta-button.secondary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+</style>
+{% endblock %}

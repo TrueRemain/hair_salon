@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% load russian_plural %}
+
+{% block title %}О нас - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Парикмахерская "Дядя Саша"</h1>
+            <p>Традиции исскуства стрижки с 2015 года</p>
+            <!--<div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">8+</span>
+                    <span class="stat-text">лет опыта</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">5000+</span>
+                    <span class="stat-text">довольных клиентов</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-text">профессиональных наград</span>
+                </div>
+            </div>-->
+        </div>
+    </div>
+</section>
+
+<!-- философия -->
+<section class="philosophy-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Мы другие</h2>
+            <p>Мы создаем не просто стрижки, а стиль жизни</p>
+        </div>
+        <div class="philosophy-grid">
+            <div class="philosophy-card">
+                <div class="card-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Традиции</h3>
+                <p>Сохраняем классические техники стрижки, сочетая их с современными трендами</p>
+            </div>
+            <div class="philosophy-card">
+                <div class="card-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h3>Качество</h3>
+                <p>Используем только профессиональные инструменты и премиальную косметику</p>
+            </div>
+            <div class="philosophy-card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Сообщество</h3>
+                <p>Создаем пространство, где мужчины могут расслабиться и быть собой</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- история -->
+<section class="story-section">
+    <div class="container">
+        <div class="story-grid">
+            <div class="story-content">
+                <h2>Наша история</h2>
+                <p>Основанный в 2015 году, парикмахерская "Саша" начала свой путь с небольшой студии в центре Тулы. С самого начала мы поставили себе цель — сделать качественные услуги доступными для каждого.</p>
+                
+                <div class="milestones">
+                    <div class="milestone">
+                        <span class="year">2015</span>
+                        <p>Открытие первой студии на пр. Ленина</p>
+                    </div>
+                    <div class="milestone">
+                        <span class="year">2018</span>
+                        <p>Расширение и обучение команды мастеров</p>
+                    </div>
+                    <div class="milestone">
+                        <span class="year">2021</span>
+                        <p>Запуск собственной линии средств для ухода</p>
+                    </div>
+                    <div class="milestone">
+                        <span class="year">2023</span>
+                        <p>Признание "Лучший барбершоп года"</p>
+                    </div>
+                </div>
+            </div>
+            <div class="story-image">
+                <img src="{% static 'images/barber.jpg' %}" alt="Интерьер барбершопа" loading="lazy">
+                <!--<div class="experience-badge">
+                    <span class="years">8</span>
+                    <span class="text">лет<br>опыта</span>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- команда -->
+<section class="team-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Наша команда</h2>
+            <p>Профессионалы, которые доведут ваш стиль до совершенства</p>
+        </div>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{% static 'images/mas1.jpg' %}" alt="Александр" loading="lazy">
+                    <!--<div class="member-social">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                    </div>-->
+                </div>
+                <div class="member-info">
+                    <h3>Александр Петров</h3>
+                    <p class="position">Главный парикмахер</p> 
+                    <!-- ДИНАМИЧЕСКИЙ РЕЙТИНГ -->
+                    {% if alexander %}
+                    <div class="master-rating">
+                        <div class="rating-stars">
+                            {{ alexander.rating_display|safe }}
+                        </div>
+                        {% if alexander.average_rating > 0 %}
+                        <span class="rating-value">{{ alexander.average_rating|floatformat:1 }}</span>
+                        <span class="rating-count">({{ alexander.reviews_count }} {{ alexander.reviews_count|pluralize_reviews }})</span>
+                        {% else %}
+                        <span class="no-rating">Пока нет оценок</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <p class="experience">Опыт: 10 лет</p>
+                    <p class="specialty">Специализация: классические стрижки, бритье</p>
+                    <div class="skills">
+                        <span class="skill-tag">Бороды</span>
+                        <span class="skill-tag">Опасная бритва</span>
+                        <span class="skill-tag">Модельные стрижки</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{% static 'images/mas2.jpg' %}" alt="Михаил" loading="lazy">
+                    <!--<div class="member-social">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                    </div>-->
+                </div>
+                <div class="member-info">
+                    <h3>Михаил Козлов</h3>
+                    <p class="position">Топ-парикмахер</p>
+                    
+                    <!-- ДИНАМИЧЕСКИЙ РЕЙТИНГ -->
+                    {% if mikhail %}
+                    <div class="master-rating">
+                        <div class="rating-stars">
+                            {{ mikhail.rating_display|safe }}
+                        </div>
+                        {% if mikhail.average_rating > 0 %}
+                        <span class="rating-value">{{ mikhail.average_rating|floatformat:1 }}</span>
+                        <span class="rating-count">({{ mikhail.reviews_count }} {{ mikhail.reviews_count|pluralize_reviews }})</span>
+                        {% else %}
+                        <span class="no-rating">Пока нет оценок</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <p class="experience">Опыт: 7 лет</p>
+                    <p class="specialty">Специализация: современные стрижки, укладки</p>
+                    <div class="skills">
+                        <span class="skill-tag">Fade</span>
+                        <span class="skill-tag">Undercut</span>
+                        <span class="skill-tag">Стайлинг</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{% static 'images/mas3.jpg' %}" alt="Дмитрий" loading="lazy">
+                    <!--<div class="member-social">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                    </div>-->
+                </div>
+                <div class="member-info">
+                    <h3>Дмитрий Соколов</h3>
+                    <p class="position">Парикмахер</p> 
+                    {% if dmitry %}
+                    <div class="master-rating">
+                        <div class="rating-stars">
+                            {{ dmitry.rating_display|safe }}
+                        </div>
+                        {% if dmitry.average_rating > 0 %}
+                        <span class="rating-value">{{ dmitry.average_rating|floatformat:1 }}</span>
+                        <span class="rating-count">({{ dmitry.reviews_count }} {{ dmitry.reviews_count|pluralize_reviews }})</span>
+                        {% else %}
+                        <span class="no-rating">Пока нет оценок</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <p class="experience">Опыт: 5 лет</p>
+                    <p class="specialty">Специализация: креативные стрижки, окрашивание</p>
+                    <div class="skills">
+                        <span class="skill-tag">Камуфляж седины</span>
+                        <span class="skill-tag">Сложные формы</span>
+                        <span class="skill-tag">Консультации</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ценности -->
+<section class="values-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Наши принципы</h2>
+            <p>То, что отличает нас от других</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-item">
+                <div class="value-number">01</div>
+                <h3>Внимание к деталям</h3>
+                <p>Каждая стрижка выполняется с ювелирной точностью. Мы не упускаем ни одной мелочи.</p>
+            </div>
+            <div class="value-item">
+                <div class="value-number">02</div>
+                <h3>Индивидуальный подход</h3>
+                <p>Мы слушаем ваши пожелания и предлагаем решения, которые подходят именно вам.</p>
+            </div>
+            <div class="value-item">
+                <div class="value-number">03</div>
+                <h3>Постоянное обучение</h3>
+                <p>Наша команда регулярно проходит обучение и участвует в профессиональных конкурсах.</p>
+            </div>
+            <!--<div class="value-item">
+                <div class="value-number">04</div>
+                <h3>Честность и прозрачность</h3>
+                <p>Мы всегда честны с клиентами и предлагаем только те услуги, которые действительно нужны.</p>
+            </div>-->
+        </div>
+    </div>
+</section>
+
+<!-- запись -->
+<section class="about-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Готовы изменить свой стиль?</h2>
+            <p>Приходите к нам и почувствуйте разницу</p>
+            <div class="cta-buttons">
+                <a href="/catalog/#booking" class="cta-button primary">Записаться онлайн</a>
+                <a href="/catalog/" class="cta-button secondary">Посмотреть услуги</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

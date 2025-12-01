@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Услуги - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="catalog-hero">
+    <div class="container">
+        <h1>Наши услуги</h1>
+        <p>Профессиональный уход для настоящих ценителей</p>
+    </div>
+</section>
+
+<section class="services-catalog">
+    <div class="container">
+        <!-- стрижки -->
+        <div class="service-category">
+            <h2><i class="fas fa-cut"></i> Стрижки и укладки</h2>
+            <div class="services-list">
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-scissors"></i>
+                    </div>
+                    <h3>Мужская стрижка</h3>
+                    <p>Профессиональная стрижка с учетом типа волос и формы лица</p>
+                    <div class="service-footer">
+                        <span class="price">1200 - 2000 руб.</span>
+                        <span class="duration">45-60 мин</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3>Стрижка машинкой</h3>
+                    <p>Аккуратная стрижка с использованием профессиональной машинки</p>
+                    <div class="service-footer">
+                        <span class="price">800 - 1200 руб.</span>
+                        <span class="duration">30 мин</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>Модельная стрижка</h3>
+                    <p>Создание стильного образа по последним тенденциям</p>
+                    <div class="service-footer">
+                        <span class="price">1500 - 2500 руб.</span>
+                        <span class="duration">60 мин</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                    <h3>Укладка и стайлинг</h3>
+                    <p>Создание идеальной прически с использованием профессиональных средств</p>
+                    <div class="service-footer">
+                        <span class="price">500 - 1000 руб.</span>
+                        <span class="duration">20 мин</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- борода -->
+        <div class="service-category">
+            <h2><i class="fas fa-user"></i> Уход за бородой</h2>
+            <div class="services-list">
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Стрижка бороды</h3>
+                    <p>Корректировка формы и длины бороды с использованием горячих полотенец</p>
+                    <div class="service-footer">
+                        <span class="price">800 - 1500 руб.</span>
+                        <span class="duration">30-45 мин</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3>Королевское бритье</h3>
+                    <p>Традиционное бритье опасной бритвой с полным ритуалом ухода</p>
+                    <div class="service-footer">
+                        <span class="price">1200 - 2000 руб.</span>
+                        <span class="duration">45 мин</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3>Комплекс "Борода+"</h3>
+                    <p>Стрижка бороды + королевское бритье + уходовые процедуры</p>
+                    <div class="service-footer">
+                        <span class="price">2000 - 3000 руб.</span>
+                        <span class="duration">75 мин</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- доп услуги -->
+        <div class="service-category">
+            <h2><i class="fas fa-star"></i> Премиум услуги</h2>
+            <div class="services-list">
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Камуфляж седины</h3>
+                    <p>Естественное затемнение седины без полного окрашивания</p>
+                    <div class="service-footer">
+                        <span class="price">1500 - 2500 руб.</span>
+                        <span class="duration">60 мин</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-mask"></i>
+                    </div>
+                    <h3>Уход за кожей головы</h3>
+                    <p>Профессиональный уход и лечение проблем кожи головы</p>
+                    <div class="service-footer">
+                        <span class="price">1000 - 1800 руб.</span>
+                        <span class="duration">40 мин</span>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-hands"></i>
+                    </div>
+                    <h3>Консультация со специалистом</h3>
+                    <p>Консультация со специалистом о уходе за волосами</p>
+                    <div class="service-footer">
+                        <span class="price">800 - 1200 руб.</span>
+                        <span class="duration">25 мин</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- предложения -->
+        <div class="service-category">
+            <h2><i class="fas fa-crown"></i> Комплексные пакеты</h2>
+            <div class="packages-grid">
+                <div class="package-card featured">
+                    <div class="package-header">
+                        <h3>Базовый пакет</h3>
+                        <div class="package-price">2500 руб.</div>
+                    </div>
+                    <ul class="package-features">
+                        <li><i class="fas fa-check"></i> Мужская стрижка</li>
+                        <li><i class="fas fa-check"></i> Стрижка бороды</li>
+                        <li><i class="fas fa-check"></i> Укладка</li>
+                    </ul>
+                    <button class="package-btn">Выбрать пакет</button>
+                </div>
+                <div class="package-card">
+                    <div class="package-badge">Хит</div>
+                    <div class="package-header">
+                        <h3>Премиум пакет</h3>
+                        <div class="package-price">4000 руб.</div>
+                    </div>
+                    <ul class="package-features">
+                        <li><i class="fas fa-check"></i> Модельная стрижка</li>
+                        <li><i class="fas fa-check"></i> Королевское бритье</li>
+                        <li><i class="fas fa-check"></i> Уход за кожей головы</li>
+                    </ul>
+                    <button class="package-btn">Выбрать пакет</button>
+                </div>
+                <div class="package-card">
+                    <div class="package-header">
+                        <h3>Полный образ</h3>
+                        <div class="package-price">5500 руб.</div>
+                    </div>
+                    <ul class="package-features">
+                        <li><i class="fas fa-check"></i> Все услуги премиум пакета</li>
+                        <li><i class="fas fa-check"></i> Камуфляж седины</li>
+                        <li><i class="fas fa-check"></i> Профессиональный стайлинг</li>
+                    </ul>
+                    <button class="package-btn">Выбрать пакет</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- запись -->
+<section class="catalog-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Готовы к преображению?</h2>
+            <p>Запишитесь онлайн и получите 10% скидку на первую стрижку</p>
+            <a href="#booking" class="cta-button">Записаться онлайн</a>
+        </div>
+    </div>
+</section> 
+<!-- запись -->
+<section id="booking" class="booking-section">
+  <div class="container">
+    <h2 class="booking-title">Записаться к мастеру</h2>
+    <p class="booking-subtitle">Оставьте свои данные, и мы с вами свяжемся</p>
+
+    <form id="booking-form" class="booking-form">
+      <div class="form-group">
+        <label for="name">Ваше имя:</label>
+        <input type="text" id="name" name="name" placeholder="Иван" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Номер телефона:</label>
+        <input type="tel" id="phone" name="phone" placeholder="+7 (900) 123-45-67" required>
+      </div>
+
+      <div class="form-group">
+        <label for="master">Выберите мастера:</label>
+        <select id="master" name="master" required>
+          <option value="">-- Сначала выберите мастера --</option>
+          <option value="alexander">Александр Петров (классические стрижки)</option>
+          <option value="mikhail">Михаил Козлов (современные стрижки)</option>
+          <option value="dmitry">Дмитрий Соколов (креативные стрижки)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="service">Услуга:</label>
+        <select id="service" name="service" required>
+          <option value="">-- Сначала выберите мастера --</option>
+          <!-- Услуги подгрузятся автоматически -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Дата:</label>
+        <input type="date" id="date" name="date" required>
+        <div id="date-hint" class="date-hint"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="time">Время:</label>
+        <select id="time" name="time" required>
+          <option value="">-- Сначала выберите дату --</option>
+          <!-- Время подгрузится автоматически -->
+        </select>
+      </div>
+
+      <button type="submit" class="cta-button">Записаться</button>
+
+      <div id="booking-feedback" class="booking-feedback"></div>
+    </form>
+  </div>
+</section>
+{% endblock %}

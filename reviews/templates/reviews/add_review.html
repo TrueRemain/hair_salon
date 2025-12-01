@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Оставить отзыв - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %} 
+{% if is_token_review %}
+<div class="verified-notice" style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 10px; margin-bottom: 2rem; border: 1px solid #c3e6cb;">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-check-circle" style="color: #28a745;"></i>
+        <strong> Вы подтвержденный клиент!</strong>
+    </div>
+    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+        Ваш отзыв будет опубликован сразу после отправки.
+    </p>
+</div>
+<input type="hidden" name="token" value="{{ token }}">
+{% endif %}
+<section class="review-hero">
+    <div class="container">
+        <h1>Оставить отзыв</h1>
+        <p>Поделитесь вашим опытом посещения нашей парикмахерской</p>
+        <!--<div class="verification-notice">
+            <i class="fas fa-shield-alt"></i>
+            <span>Отзывы могут оставлять только наши клиенты. Мы проверим ваш номер телефона.</span>
+        </div>-->
+    </div>
+</section>
+
+<section class="review-form-section">
+    <div class="container">
+        <div class="review-form-container">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <form method="post" class="review-form" id="reviewForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.master.id_for_label }}">{{ form.master.label }}</label>
+                    {{ form.master }}
+                    {% if form.master.errors %}
+                    <div class="error">{{ form.master.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.client_name.id_for_label }}">{{ form.client_name.label }}</label>
+                    {{ form.client_name }}
+                    {% if form.client_name.errors %}
+                    <div class="error">{{ form.client_name.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+                    {{ form.phone }}
+                    <small class="form-help">{{ form.phone.help_text }}</small>
+                    <div id="phone-status" class="phone-status"></div>
+                    {% if form.phone.errors %}
+                    <div class="error">{{ form.phone.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ form.stars.label }}</label>
+                    <div class="star-rating">
+                        {% for choice in form.stars %}
+                        <label class="star-option">
+                            {{ choice.tag }}
+                            <span class="stars">{{ choice.choice_label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% if form.stars.errors %}
+                    <div class="error">{{ form.stars.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.text.id_for_label }}">{{ form.text.label }}</label>
+                    {{ form.text }}
+                    {% if form.text.errors %}
+                    <div class="error">{{ form.text.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="cta-button" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    Отправить отзыв
+                </button>
+            </form>
+            
+            <div class="verification-info">
+                <h3><i class="fas fa-info-circle"></i> Как проходит проверка?</h3>
+                <p>Мы проверяем номер телефона в нашей базе записей. Если вы записывались к выбранному мастеру через нашу систему - ваш отзыв будет помечен как "Проверенный клиент".</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.verification-notice {
+    background: rgba(212, 175, 55, 0.1);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    border: 1px solid var(--primary-color);
+}
+
+.verification-notice i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.phone-status {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    display: none;
+}
+
+.phone-status.verified {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.phone-status.not-verified {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.phone-status.checking {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.verification-info {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.verification-info h3 {
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.verification-info p {
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+</style>
+
+<script src="https://unpkg.com/imask"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.querySelector('#id_phone');
+    const masterSelect = document.querySelector('#id_master');
+    const phoneStatus = document.querySelector('#phone-status');
+    const submitBtn = document.querySelector('#submitBtn');
+    
+    // Подключаем маску к полю телефона
+    IMask(phoneInput, {
+        mask: '+7 (000) 000-00-00'
+    });
+
+// В add_review.txt - обновите функцию checkPhoneVerification
+function checkPhoneVerification() {
+    const phone = phoneInput.value;
+    const masterId = masterSelect.value;
+    const clientName = document.querySelector('#id_client_name').value;
+    
+    if (phone.length > 5 && masterId) {
+        phoneStatus.style.display = 'block';
+        phoneStatus.className = 'phone-status checking';
+        phoneStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Проверяем номер...';
+        
+        let url = `/reviews/check-phone/?phone=${encodeURIComponent(phone)}&master_id=${masterId}`;
+        if (clientName) {
+            url += `&client_name=${encodeURIComponent(clientName)}`;
+        }
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.verified) {
+                    phoneStatus.className = 'phone-status verified';
+                    phoneStatus.innerHTML = '<i class="fas fa-check-circle"></i>  Клиент подтвержден! Вы записывались к этому мастеру.';
+                } else {
+                    phoneStatus.className = 'phone-status not-verified';
+                    phoneStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i>  ${data.message || 'Запись не найдена'}`;
+                }
+            })
+            .catch(error => {
+                phoneStatus.className = 'phone-status not-verified';
+                phoneStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Ошибка проверки. Попробуйте еще раз.';
+            });
+    } else {
+        phoneStatus.style.display = 'none';
+    }
+}
+
+// Добавьте проверку при изменении имени
+const clientNameInput = document.querySelector('#id_client_name');
+if (clientNameInput) {
+    clientNameInput.addEventListener('input', checkPhoneVerification);
+}
+    
+    // Проверяем при изменении номера или мастера
+    phoneInput.addEventListener('input', checkPhoneVerification);
+    masterSelect.addEventListener('change', checkPhoneVerification);
+});
+</script>
+{% endblock %}

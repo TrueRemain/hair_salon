@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Оставить отзыв - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="review-hero">
+    <div class="container">
+        <h1>Оставить отзыв</h1>
+        <p>Поделитесь вашим опытом посещения нашей парикмахерской</p>
+    </div>
+</section>
+
+<section class="review-form-section">
+    <div class="container">
+        <div class="review-form-container">
+            <div class="review-methods">
+                <div class="method-card" style="background: var(--accent-color); padding: 2rem; border-radius: 15px; margin-bottom: 2rem;">
+                    <h3><i class="fas fa-magic"></i> Быстрый способ (рекомендуется)</h3>
+                    <p>Если вы записывались через наш сайт, вы получили уникальную ссылку для отзыва.</p>
+                    <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                        <li>Автоматическое подтверждение клиента</li>
+                        <li>Мгновенная публикация отзыва</li>
+                        <li>Статус "Проверенный клиент"</li>
+                    </ul>
+                    <p><strong>Просто перейдите по ссылке, которую получили после записи.</strong></p>
+                </div>
+
+                <div class="method-card" style="background: var(--accent-color); padding: 2rem; border-radius: 15px;">
+                    <h3><i class="fas fa-edit"></i> Стандартный способ</h3>
+                    <p>Заполните форму отзыва с проверкой номера телефона.</p>
+                    <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                        <li>Проверка по базе записей</li>
+                        <li>Модерация перед публикацией</li>
+                        <li>Статус "Проверенный клиент" после подтверждения</li>
+                    </ul>
+                    <a href="{% url 'reviews:add_review' %}" class="cta-button">
+                        <i class="fas fa-pencil-alt"></i>
+                        Перейти к форме отзыва
+                    </a>
+                </div>
+            </div>
+
+            <div class="verification-info" style="margin-top: 3rem;">
+                <h3><i class="fas fa-shield-alt"></i> Как работает проверка?</h3>
+                <p>Мы проверяем номер телефона в нашей базе записей. Отзывы от реальных клиентов помечаются специальным значком "Проверенный клиент", что повышает доверие других посетителей.</p>
+                
+                <!--<div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <div class="feature" style="text-align: center; padding: 1rem;">
+                        <i class="fas fa-bolt" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                        <p>Быстрая публикация</p>
+                    </div>
+                    <div class="feature" style="text-align: center; padding: 1rem;">
+                        <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                        <p>Подтвержденный статус</p>
+                    </div>
+                    <div class="feature" style="text-align: center; padding: 1rem;">
+                        <i class="fas fa-star" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                        <p>Повышенное доверие</p>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

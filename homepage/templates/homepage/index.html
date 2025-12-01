@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Добро пожаловать в Парикмахерскую "Дядя Саша"</h1>
+        <p>Профессиональный уход за вашей прической</p>
+        <a href="#booking" class="cta-button">Записаться</a>
+    </div>
+</section>
+
+<!-- галерея -->
+<section class="gallery-section" id="gallery">
+    <div class="container">
+        <h2 class="gallery-title">Наши работы</h2>
+        <p class="gallery-subtitle">Лучшие примеры наших парикмахерских услуг</p>
+        
+        <div class="carousel-container">
+            <button class="carousel-btn prev-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="carousel">
+                <div class="carousel-track">
+                    <div class="carousel-item" data-index="0">
+                        <img src="/static/images/car1.jpg" alt="Уход" loading="lazy">
+                        <div class="carousel-text">Уход за волосами</div>
+                    </div>
+                    <div class="carousel-item" data-index="1">
+                        <img src="/static/images/car2.jpg" alt="Вечерние прически" loading="lazy">
+                        <div class="carousel-text">Вечерние прически</div>
+                    </div>
+                    <div class="carousel-item active" data-index="2">
+                        <img src="/static/images/car3.jpg" alt="Стрижка" loading="lazy">
+                        <div class="carousel-text">Современные стрижки</div>
+                    </div>
+                    <div class="carousel-item" data-index="3">
+                        <img src="/static/images/car4.jpg" alt="Окрашивание" loading="lazy">
+                        <div class="carousel-text">Профессиональное окрашивание</div>
+                    </div>
+                    <div class="carousel-item" data-index="4">
+                        <img src="/static/images/car5.jpg" alt="Укладка" loading="lazy">
+                        <div class="carousel-text">Вечерние укладки</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="carousel-btn next-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <div class="carousel-dots">
+            <span class="dot active" data-index="0"></span>
+            <span class="dot" data-index="1"></span>
+            <span class="dot" data-index="2"></span>
+            <span class="dot" data-index="3"></span>
+            <span class="dot" data-index="4"></span>
+        </div>
+    </div>
+</section>
+
+<!-- Блок отзывов -->
+<section class="reviews-section">
+    <div class="container">
+        <h2 class="reviews-title">Отзывы наших клиентов</h2>
+        <p class="reviews-subtitle">Что говорят о работе наших мастеров</p>
+        
+        <div class="reviews-grid">
+        {% for review in reviews %}
+        <div class="review-card">
+            <div class="review-header">
+                <div class="review-client">
+                    <h4>{{ review.client_name }}</h4>
+                    <span class="review-master">Мастер: {{ review.master.name }}</span>
+                    {% if review.is_verified %}
+                    <div class="verified-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Проверенный клиент
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="review-stars">
+                    {{ review.get_stars_display }}
+                </div>
+            </div>
+        <div class="review-text">
+            <p>{{ review.text }}</p>
+        </div>
+        <div class="review-date">
+            {{ review.created_at|date:"d.m.Y" }}
+        </div>
+    </div>
+    {% endfor %}
+        </div>
+        
+        {% if reviews %}
+        <div class="reviews-cta">
+            <a href="{% url 'reviews:add_review' %}" class="cta-button">Оставить свой отзыв</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- карта -->
+<section class="location-section">
+    <div class="container">
+        <div class="location-grid">
+            <div class="location-info">
+                <h2>Как нас найти</h2>
+                <div class="contact-card">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Адрес</h3>
+                            <p>пр. Ленина, 92<br>Тула, Россия</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h3>Часы работы</h3>
+                            <p>Пн-Пт: 9:00 - 20:00<br>Сб-Вс: 10:00 - 18:00</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>Телефон</h3>
+                            <p>+7 (909) 337-63-02</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>info@sasha-beauty.ru</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://yandex.ru/maps/?text=ул. Примерная, 123, Москва" class="cta-button map-button" target="_blank">
+                    <i class="fas fa-directions"></i>
+                    Построить маршрут
+                </a>
+            </div>
+            <div class="map-container">
+                <iframe 
+                    src="https://yandex.ru/map-widget/v1/?um=constructor%3Acda60e5a8d18f54034aafbbdd1c0292e486e11121cce9a6accbb6a5ce608deb9&amp;source=constructor" width="600" height="400" frameborder="0">" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    allowfullscreen="true" 
+                    style="position:relative;"
+                    title="Карта парикмахерской Саша">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- достоинства -->
+<section class="features">
+    <div class="container">
+        <h2>Почему выбирают нас</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-star"></i>
+                <h3>Профессионализм</h3>
+                <p>Опытные мастера с многолетним стажем</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-gem"></i>
+                <h3>Качество</h3>
+                <p>Используем только премиальные материалы</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-heart"></i>
+                <h3>Забота</h3>
+                <p>Индивидуальный подход к каждому клиенту</p>
+            </div>
+        </div>
+    </div>
+</section> 
+<!-- запись -->
+<section id="booking" class="booking-section">
+  <div class="container">
+    <h2 class="booking-title">Записаться к мастеру</h2>
+    <p class="booking-subtitle">Оставьте свои данные, и мы с вами свяжемся</p>
+
+    <form id="booking-form" class="booking-form">
+      <div class="form-group">
+        <label for="name">Ваше имя:</label>
+        <input type="text" id="name" name="name" placeholder="Иван" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Номер телефона:</label>
+        <input type="tel" id="phone" name="phone" placeholder="+7 (900) 123-45-67" required>
+      </div>
+
+      <div class="form-group">
+        <label for="master">Выберите мастера:</label>
+        <select id="master" name="master" required>
+          <option value="">-- Сначала выберите мастера --</option>
+          <option value="alexander">Александр Петров (классические стрижки)</option>
+          <option value="mikhail">Михаил Козлов (современные стрижки)</option>
+          <option value="dmitry">Дмитрий Соколов (креативные стрижки)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="service">Услуга:</label>
+        <select id="service" name="service" required>
+          <option value="">-- Сначала выберите мастера --</option>
+          <!-- Услуги подгрузятся автоматически -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Дата:</label>
+        <input type="date" id="date" name="date" required>
+        <div id="date-hint" class="date-hint"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="time">Время:</label>
+        <select id="time" name="time" required>
+          <option value="">-- Сначала выберите дату --</option>
+          <!-- Время подгрузится автоматически -->
+        </select>
+      </div>
+
+      <button type="submit" class="cta-button">Записаться</button>
+
+      <div id="booking-feedback" class="booking-feedback"></div>
+    </form>
+  </div>
+</section>
+{% endblock %}
