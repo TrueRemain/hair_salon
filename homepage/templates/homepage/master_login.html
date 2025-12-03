@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Вход для мастеров - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="master-page">
+    <div class="container">
+        <div class="login-card">
+            <div class="login-logo">
+                <h2>Личный кабинет</h2>
+                <p>Добро пожаловать в личный кабинет</p>
+            </div>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" class="master-form">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error">
+                        <i class="fas fa-times-circle me-2"></i>
+                        {{ form.non_field_errors|join:", " }}
+                    </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user me-1"></i>Логин
+                    </label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           placeholder="Введите ваш логин"
+                           required
+                           value="{{ form.username.value|default:'' }}">
+                    {% if form.username.errors %}
+                        <small class="text-danger">{{ form.username.errors|join:", " }}</small>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock me-1"></i>Пароль
+                    </label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           placeholder="Введите ваш пароль"
+                           required>
+                    {% if form.password.errors %}
+                        <small class="text-danger">{{ form.password.errors|join:", " }}</small>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Войти в кабинет
+                </button>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Для получения доступа обратитесь к администратору
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -38,4 +38,33 @@ class Booking(models.Model):
         unique_together = ['master', 'date', 'time']
     
     def __str__(self):
-        return f"{self.name} - {self.get_master_display()} - {self.date} {self.time}"
+        return f"{self.name} - {self.get_master_display()} - {self.date} {self.time}" 
+    
+# Добавьте после существующей модели Booking
+
+class MasterAccount(models.Model):
+    """Модель для учетных данных мастеров"""
+    
+    MASTER_CHOICES = [
+        ('alexander', 'Александр Петров'),
+        ('mikhail', 'Михаил Козлов'), 
+        ('dmitry', 'Дмитрий Соколов'),
+        ('admin', 'Администратор'),
+    ]
+    
+    username = models.CharField(max_length=50, unique=True, verbose_name='Логин')
+    password = models.CharField(max_length=100, verbose_name='Пароль')
+    master_code = models.CharField(max_length=20, choices=MASTER_CHOICES, verbose_name='Код мастера')
+    is_active = models.BooleanField(default=True, verbose_name='Активен')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    
+    class Meta:
+        verbose_name = 'Аккаунт мастера'
+        verbose_name_plural = 'Аккаунты мастеров'
+    
+    def __str__(self):
+        return f"{self.get_master_code_display()} ({self.username})"
+    
+    @property
+    def is_admin(self):
+        return self.master_code == 'admin'

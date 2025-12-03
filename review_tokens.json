@@ -35,6 +35,16 @@
     "booking_id": 11,
     "created_at": "2025-12-01T14:03:33.889603",
     "expires_at": "2025-12-08T14:03:33.889603",
+    "used": true,
+    "used_at": "2025-12-01T14:38:17.461666"
+  },
+  "22d2751412989c85dbc2": {
+    "phone": "+79531865336",
+    "client_name": "Иван",
+    "master_code": "alexander",
+    "booking_id": 12,
+    "created_at": "2025-12-01T14:53:51.739186",
+    "expires_at": "2025-12-08T14:53:51.739186",
     "used": false
   }
 }

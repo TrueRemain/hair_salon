@@ -72,8 +72,23 @@
                     <a href="#"><i class="fab fa-vk"></i></a>
                     <a href="#"><i class="fab fa-whatsapp"></i></a>
                 </div>
+            </div> 
+            <div class="footer-section">
+                <h4>Для мастеров</h4>
+                <p>
+                    <a href="{% url 'master_login' %}" class="master-login-link">
+                        <i class="fas fa-user-tie"></i> Личный кабинет мастера
+                    </a>
+                </p>
+                <!--{% if user.is_authenticated %}
+                <p>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> Вы вошли как мастер
+                    </small>
+                </p>
+                {% endif %}-->
             </div>
-        </div>
+        </div> 
         <div class="footer-bottom">
             <p>&copy; 2025 Парикмахерская "Дядя Саша". Все права не защищены.</p>
         </div>

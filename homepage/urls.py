@@ -32,7 +32,15 @@ urlpatterns = [
     path('reviews/', include('reviews.urls')),     # ВСЕ маршруты отзывов 
     path('api/booking/create/', views.create_booking, name='create_booking'),
     path('api/booking/slots/', views.get_available_time_slots, name='get_slots'), 
-    path('debug/', debug_urls, name='debug_urls'),
+    path('debug/', debug_urls, name='debug_urls'), 
+    # для личного кабинета
+    path('masters/login/', views.master_login, name='master_login'),
+    path('masters/dashboard/', views.master_dashboard, name='master_dashboard'),
+    path('masters/dashboard/<str:master_code>/', views.master_dashboard, name='master_dashboard_master'),
+    path('masters/admin/', views.admin_panel, name='admin_panel'),
+    path('masters/switch/<str:master_code>/', views.switch_to_master, name='switch_to_master'),
+    path('masters/return-admin/', views.return_to_admin, name='return_to_admin'),
+    path('masters/logout/', views.master_logout, name='master_logout'),
 ] 
 
 if settings.DEBUG:

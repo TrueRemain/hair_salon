@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load master_tags %}
+
+{% block title %}Админ-панель - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="master-page">
+    <div class="container">
+        <!-- Шапка админ-панели -->
+        <div class="admin-panel">
+            <div class="admin-header">
+                <div>
+                    <h2><!--<i class="fas fa-crown me-2">--></i>Админ-панель</h2>
+                    <p class="text-muted mb-0">Управление мастерами и просмотр всех записей</p>
+                </div>
+                <div>
+                    <a href="{% url 'master_logout' %}" class="logout-btn" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>Выйти
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Статистика -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>{{ masters|length }}</h3>
+                    <p>Мастеров в системе</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ total_bookings }}</h3>
+                    <p>Всего записей</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ upcoming_count }}</h3>
+                    <p>Предстоящих</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ past_count }}</h3>
+                    <p>Прошедших</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Список мастеров -->
+        <div class="admin-panel mt-4">
+            <h3 class="section-title">
+                <i class="fas fa-users"></i>Мастера
+            </h3>
+            
+            <div class="masters-grid">
+                {% for master in masters %}
+                <div class="master-card" id="master-card-{{ master.master_code }}">
+                    <div class="master-avatar mb-3">
+                        <i class="fas fa-user-tie" style="font-size: 3rem; color: var(--primary-color);"></i>
+                    </div>
+                    <h4>{{ master.get_master_code_display }}</h4>
+                    <p>Логин: <strong>{{ master.username }}</strong></p>
+                    
+                    <div class="master-stats mb-3">
+                        {% with master_stats=bookings_by_master|get_item:master.master_code %}
+                        <div style="display: flex; justify-content: space-around; margin: 1rem 0;">
+                            <div class="text-center">
+                                <div class="text-primary" style="font-size: 1.2rem; font-weight: bold;">
+                                    {{ master_stats.upcoming|default:0 }}
+                                </div>
+                                <div class="text-muted" style="font-size: 0.8rem;">Предстоящие</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-secondary" style="font-size: 1.2rem; font-weight: bold;">
+                                    {{ master_stats.past|default:0 }}
+                                </div>
+                                <div class="text-muted" style="font-size: 0.8rem;">Прошедшие</div>
+                            </div>
+                            <div class="text-center">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary-color);">
+                                    {{ master_stats.total|default:0 }}
+                                </div>
+                                <div class="text-muted" style="font-size: 0.8rem;">Всего</div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </div>
+                    
+                    <a href="{% url 'switch_to_master' master.master_code %}" 
+                       class="admin-btn" 
+                       id="switch-btn-{{ master.master_code }}">
+                        <!--<i class="fas fa-eye me-1">--></i>Перейти в кабинет
+                    </a>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">
+                    <i class="fas fa-user-slash mb-3" style="font-size: 3rem; color: var(--text-light);"></i>
+                    <h4 style="color: var(--text-light);">Мастера не найдены</h4>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Все записи -->
+        <div class="admin-panel mt-4">
+            <h3 class="section-title">
+                <i class="fas fa-calendar-alt"></i>Все записи
+            </h3>
+            
+            <div class="bookings-tabs">
+                <button class="tab-btn active" id="tab-upcoming">
+                    <i class="fas fa-calendar-check me-1"></i> Предстоящие
+                </button>
+                <button class="tab-btn" id="tab-past">
+                    <i class="fas fa-history me-1"></i> Прошедшие
+                </button>
+            </div>
+            
+            <!-- Предстоящие записи -->
+            <div id="all-upcoming-bookings" class="bookings-section">
+                {% if upcoming_count > 0 %}
+                    {% for master_code, stats in bookings_by_master.items %}
+                        {% if stats.upcoming > 0 %}
+                        <div class="date-group mb-4">
+                            <div class="date-header">
+                                <h4>
+                                    <i class="fas fa-user-tie me-2"></i>
+                                    {{ stats.name }}
+                                </h4>
+                                <span class="date-badge">{{ stats.upcoming }} записей</span>
+                            </div>
+                            
+                            <!-- Здесь будут записи для этого мастера -->
+                            <!-- Django не позволяет фильтровать в шаблоне, так что покажем только статистику -->
+                            <div class="text-center py-3">
+                                <p class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    {{ stats.upcoming }} предстоящих записей у {{ stats.name }}
+                                </p>
+                                <p>
+                                    <small class="text-muted">Нажмите "Перейти в кабинет", чтобы увидеть детали</small>
+                                </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-5" style="background: var(--accent-color); border-radius: 15px;">
+                    <i class="fas fa-calendar-times mb-3" style="font-size: 3rem; color: var(--text-light);"></i>
+                    <h4 style="color: var(--text-light);">Нет предстоящих записей</h4>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Прошедшие записи -->
+            <div id="all-past-bookings" class="bookings-section" style="display: none;">
+                {% if past_count > 0 %}
+                    {% for master_code, stats in bookings_by_master.items %}
+                        {% if stats.past > 0 %}
+                        <div class="date-group mb-4">
+                            <div class="date-header">
+                                <h4>
+                                    <i class="fas fa-user-tie me-2"></i>
+                                    {{ stats.name }}
+                                </h4>
+                                <span class="date-badge">{{ stats.past }} записей</span>
+                            </div>
+                            
+                            <div class="text-center py-3">
+                                <p class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    {{ stats.past }} прошедших записей у {{ stats.name }}
+                                </p>
+                                <p>
+                                    <small class="text-muted">Нажмите "Перейти в кабинет", чтобы увидеть детали</small>
+                                </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-5" style="background: var(--accent-color); border-radius: 15px;">
+                    <i class="fas fa-history mb-3" style="font-size: 3rem; color: var(--text-light);"></i>
+                    <h4 style="color: var(--text-light);">Нет прошедших записей</h4>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Управление вкладками
+document.getElementById('tab-upcoming').addEventListener('click', function() {
+    document.getElementById('all-upcoming-bookings').style.display = 'block';
+    document.getElementById('all-past-bookings').style.display = 'none';
+    document.getElementById('tab-upcoming').classList.add('active');
+    document.getElementById('tab-past').classList.remove('active');
+});
+
+document.getElementById('tab-past').addEventListener('click', function() {
+    document.getElementById('all-upcoming-bookings').style.display = 'none';
+    document.getElementById('all-past-bookings').style.display = 'block';
+    document.getElementById('tab-upcoming').classList.remove('active');
+    document.getElementById('tab-past').classList.add('active');
+});
+
+// Логин и логаут уже обрабатываются через обычные ссылки
+</script>
+{% endblock %}

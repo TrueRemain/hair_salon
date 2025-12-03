@@ -65,7 +65,7 @@ def add_review(request, token=None):
                 
                 messages.success(
                     request, 
-                    '✅ Спасибо! Ваш отзыв успешно опубликован.'
+                    ' Спасибо! Ваш отзыв успешно опубликован.'
                 )
                 return redirect('reviews:review_success')
             else:

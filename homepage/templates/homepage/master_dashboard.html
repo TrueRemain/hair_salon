@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет - {{ master_name }} - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="master-page">
+    <div class="container">
+        <!-- Шапка кабинета -->
+        <div class="dashboard-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="master-welcome">
+                    <h1>Личный кабинет</h1>
+                    <div class="master-name">
+                        <i class="fas fa-user-tie"></i>
+                        {{ master_name }}
+                    </div>
+                </div>
+                <div>
+                    {% if is_admin_view %}
+                    <a href="{% url 'return_to_admin' %}" class="logout-btn return-admin-btn">
+                        <i class="fas fa-arrow-left"></i>Вернуться в админку
+                    </a>
+                    {% else %}
+                    <a href="{% url 'master_logout' %}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>Выйти
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Статистика -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="today-date">{{ today }}</h3>
+                    <p>Сегодняшняя дата</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="upcoming-count">{{ total_upcoming }}</h3>
+                    <p>Предстоящих записей</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="past-count">{{ total_past }}</h3>
+                    <p>Прошедших записей</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="total-count">{{ total_upcoming|add:total_past }}</h3>
+                    <p>Всего записей</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Переключение между предстоящими и прошедшими -->
+        <div class="bookings-tabs">
+            <button class="tab-btn active" id="tab-upcoming-btn">
+                <i class="fas fa-calendar-check me-1"></i>Предстоящие
+                <span class="badge bg-primary ms-2">{{ total_upcoming }}</span>
+            </button>
+            <button class="tab-btn" id="tab-past-btn">
+                <i class="fas fa-history me-1"></i>Прошедшие
+                <span class="badge bg-secondary ms-2">{{ total_past }}</span>
+            </button>
+        </div>
+        
+        <!-- Предстоящие записи -->
+        <div id="upcoming-bookings" class="bookings-section">
+            <h3 class="section-title">
+                <i class="fas fa-clock"></i>Предстоящие записи
+            </h3>
+            
+            {% if upcoming_by_date %}
+                {% for date_str, bookings in upcoming_by_date.items %}
+                <div class="date-group">
+                    <div class="date-header">
+                        <h4>
+                            <i class="fas fa-calendar-day me-2"></i>{{ date_str }}
+                            {% if date_str == today %}
+                            <span class="today-badge">(Сегодня)</span>
+                            {% endif %}
+                        </h4>
+                        <span class="date-badge">{{ bookings|length }} записей</span>
+                    </div>
+                    
+                    {% for booking in bookings %}
+                    <div class="booking-card upcoming">
+                        <div class="booking-time">
+                            <span class="time-badge">
+                                <i class="fas fa-clock"></i>{{ booking.time|time:"H:i" }}
+                            </span>
+                        </div>
+                        
+                        <div class="booking-client">
+                            <h5>{{ booking.name }}</h5>
+                            <span class="booking-status status-upcoming">
+                                Ожидается
+                            </span>
+                        </div>
+                        
+                        <div class="booking-details">
+                            <div class="detail-item">
+                                <i class="fas fa-cut"></i>
+                                <span>{{ booking.get_service_display }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ booking.phone }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Создана: {{ booking.created_at|date:"d.m.Y H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="text-center py-5 no-bookings">
+                <i class="fas fa-calendar-times mb-3"></i>
+                <h4>Нет предстоящих записей</h4>
+                <p class="text-muted">Все запланированные посещения будут отображаться здесь</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Прошедшие записи -->
+        <div id="past-bookings" class="bookings-section" style="display: none;">
+            <h3 class="section-title">
+                <i class="fas fa-history"></i>Прошедшие записи
+            </h3>
+            
+            {% if past_by_date %}
+                {% for date_str, bookings in past_by_date.items %}
+                <div class="date-group">
+                    <div class="date-header">
+                        <h4>
+                            <i class="fas fa-calendar-day me-2"></i>{{ date_str }}
+                        </h4>
+                        <span class="date-badge">{{ bookings|length }} записей</span>
+                    </div>
+                    
+                    {% for booking in bookings %}
+                    <div class="booking-card past">
+                        <div class="booking-time">
+                            <span class="time-badge">
+                                <i class="fas fa-history"></i>{{ booking.time|time:"H:i" }}
+                            </span>
+                        </div>
+                        
+                        <div class="booking-client">
+                            <h5>{{ booking.name }}</h5>
+                            <span class="booking-status status-past">
+                                Выполнено
+                            </span>
+                        </div>
+                        
+                        <div class="booking-details">
+                            <div class="detail-item">
+                                <i class="fas fa-cut"></i>
+                                <span>{{ booking.get_service_display }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ booking.phone }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Создана: {{ booking.created_at|date:"d.m.Y H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="text-center py-5 no-bookings">
+                <i class="fas fa-history mb-3"></i>
+                <h4>Нет прошедших записей</h4>
+                <p class="text-muted">История ваших записей появится здесь</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Элементы для управления вкладками
+    const tabUpcomingBtn = document.getElementById('tab-upcoming-btn');
+    const tabPastBtn = document.getElementById('tab-past-btn');
+    const upcomingSection = document.getElementById('upcoming-bookings');
+    const pastSection = document.getElementById('past-bookings');
+    
+    // Обработчик для кнопки "Предстоящие"
+    tabUpcomingBtn.addEventListener('click', function() {
+        // Активируем кнопку
+        tabUpcomingBtn.classList.add('active');
+        tabPastBtn.classList.remove('active');
+        
+        // Показываем соответствующую секцию
+        upcomingSection.style.display = 'block';
+        pastSection.style.display = 'none';
+    });
+    
+    // Обработчик для кнопки "Прошедшие"
+    tabPastBtn.addEventListener('click', function() {
+        // Активируем кнопку
+        tabUpcomingBtn.classList.remove('active');
+        tabPastBtn.classList.add('active');
+        
+        // Показываем соответствующую секцию
+        upcomingSection.style.display = 'none';
+        pastSection.style.display = 'block';
+    });
+    
+    // Обновляем стиль для кнопки возврата в админку
+    const returnAdminBtn = document.querySelector('.return-admin-btn');
+    if (returnAdminBtn) {
+        returnAdminBtn.style.background = 'linear-gradient(135deg, #6c757d, #545b62)';
+    }
+});
+</script>
+{% endblock %}
