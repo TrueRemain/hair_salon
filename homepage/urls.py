@@ -40,7 +40,8 @@ urlpatterns = [
     path('masters/admin/', views.admin_panel, name='admin_panel'),
     path('masters/switch/<str:master_code>/', views.switch_to_master, name='switch_to_master'),
     path('masters/return-admin/', views.return_to_admin, name='return_to_admin'),
-    path('masters/logout/', views.master_logout, name='master_logout'),
+    path('masters/logout/', views.master_logout, name='master_logout'), 
+    path('catalog/style-consultation/', views.style_consultation, name='style_consultation'),
 ] 
 
 if settings.DEBUG:

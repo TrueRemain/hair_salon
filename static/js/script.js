@@ -682,4 +682,392 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof Carousel !== 'undefined') {
         new Carousel();
     }
+}); 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const consultationForm = document.getElementById('style-consultation-form');
+    
+    if (consultationForm) {
+        // Реальная валидация на клиенте
+        consultationForm.addEventListener('submit', function(e) {
+            let isValid = true;
+            const errorMessages = [];
+            
+            // Проверка имени
+            const nameInput = consultationForm.querySelector('#id_name');
+            if (nameInput) {
+                const name = nameInput.value.trim();
+                if (!name) {
+                    isValid = false;
+                    errorMessages.push('Имя обязательно для заполнения');
+                } else if (!/^[А-Яа-яЁёA-Za-z\s\-]+$/.test(name)) {
+                    isValid = false;
+                    errorMessages.push('Имя может содержать только буквы, пробелы и дефисы');
+                } else if (name.length < 2) {
+                    isValid = false;
+                    errorMessages.push('Имя должно содержать минимум 2 символа');
+                } else if (!name[0].isUpperCase()) {
+                    isValid = false;
+                    errorMessages.push('Имя должно начинаться с заглавной буквы');
+                }
+            }
+            
+            // Проверка телефона
+            const phoneInput = consultationForm.querySelector('#id_phone');
+            if (phoneInput) {
+                const phone = phoneInput.value.trim();
+                const phoneRegex = /^(\+7|8)[\-\s]?\(?\d{3}\)?[\-\s]?\d{3}[\-\s]?\d{2}[\-\s]?\d{2}$/;
+                if (!phone) {
+                    isValid = false;
+                    errorMessages.push('Телефон обязателен для заполнения');
+                } else if (!phoneRegex.test(phone)) {
+                    isValid = false;
+                    errorMessages.push('Введите корректный номер телефона');
+                }
+            }
+            
+            // Проверка возраста
+            const ageInput = consultationForm.querySelector('#id_age');
+            if (ageInput) {
+                const age = parseInt(ageInput.value);
+                if (!ageInput.value) {
+                    isValid = false;
+                    errorMessages.push('Возраст обязателен для заполнения');
+                } else if (isNaN(age)) {
+                    isValid = false;
+                    errorMessages.push('Возраст должен быть числом');
+                } else if (age < 12 || age > 100) {
+                    isValid = false;
+                    errorMessages.push('Возраст должен быть от 12 до 100 лет');
+                }
+            }
+            
+            // Проверка email
+            const emailInput = consultationForm.querySelector('#id_email');
+            if (emailInput && emailInput.value.trim()) {
+                const email = emailInput.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    isValid = false;
+                    errorMessages.push('Введите корректный email адрес');
+                }
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                showValidationErrors(errorMessages);
+            }
+        });
+        
+        // Реальная валидация при вводе
+        const inputs = consultationForm.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            input.addEventListener('input', function() {
+                clearFieldError(this);
+            });
+        });
+    }
+    
+    function validateField(field) {
+        const value = field.value.trim();
+        let error = '';
+        
+        switch(field.id) {
+            case 'id_name':
+                if (!value) {
+                    error = 'Имя обязательно';
+                } else if (!/^[А-Яа-яЁёA-Za-z\s\-]+$/.test(value)) {
+                    error = 'Только буквы, пробелы и дефисы';
+                } else if (value.length < 2) {
+                    error = 'Минимум 2 символа';
+                } else if (!value[0].isUpperCase()) {
+                    error = 'Начните с заглавной буквы';
+                }
+                break;
+                
+            case 'id_phone':
+                if (!value) {
+                    error = 'Телефон обязателен';
+                } else if (!/^(\+7|8)[\-\s]?\(?\d{3}\)?[\-\s]?\d{3}[\-\s]?\d{2}[\-\s]?\d{2}$/.test(value)) {
+                    error = 'Неверный формат телефона';
+                }
+                break;
+                
+            case 'id_age':
+                if (!value) {
+                    error = 'Возраст обязателен';
+                } else {
+                    const age = parseInt(value);
+                    if (isNaN(age)) {
+                        error = 'Введите число';
+                    } else if (age < 12 || age > 100) {
+                        error = 'От 12 до 100 лет';
+                    }
+                }
+                break;
+                
+            case 'id_email':
+                if (value) {
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                        error = 'Неверный формат email';
+                    }
+                }
+                break;
+        }
+        
+        if (error) {
+            showFieldError(field, error);
+        } else {
+            showFieldSuccess(field);
+        }
+    }
+    
+    function showFieldError(field, message) {
+        clearFieldError(field);
+        field.classList.add('is-invalid');
+        field.classList.remove('is-valid');
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-text';
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        field.parentNode.appendChild(errorDiv);
+    }
+    
+    function showFieldSuccess(field) {
+        clearFieldError(field);
+        field.classList.add('is-valid');
+        field.classList.remove('is-invalid');
+    }
+    
+    function clearFieldError(field) {
+        field.classList.remove('is-invalid', 'is-valid');
+        const errorDiv = field.parentNode.querySelector('.error-text');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+    }
+    
+    function showValidationErrors(errors) {
+        // Показываем ошибки пользователю
+        alert('Пожалуйста, исправьте ошибки:\n\n' + errors.join('\n'));
+    }
+}); 
+
+// here 
+// ДОБАВЬТЕ ЭТОТ КОД В КОНЕЦ script.txt ИЛИ В catalog.html
+document.addEventListener('DOMContentLoaded', function() {
+    const consultationForm = document.getElementById('style-consultation-form');
+    
+    if (consultationForm) {
+        // Создаем контейнер для сообщений под кнопкой
+        const messageContainer = document.createElement('div');
+        messageContainer.id = 'form-validation-message';
+        messageContainer.style.marginTop = '15px';
+        messageContainer.style.padding = '10px';
+        messageContainer.style.borderRadius = '8px';
+        messageContainer.style.display = 'none';
+        
+        // Вставляем контейнер после кнопки отправки
+        const submitBtn = consultationForm.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.parentNode.appendChild(messageContainer);
+        }
+        
+        // Перехватываем отправку формы
+        consultationForm.addEventListener('submit', function(e) {
+            // Очищаем предыдущие сообщения
+            messageContainer.style.display = 'none';
+            messageContainer.innerHTML = '';
+            messageContainer.className = '';
+            
+            // Собираем все поля формы
+            const formData = new FormData(consultationForm);
+            let hasErrors = false;
+            const errorMessages = [];
+            
+            // Проверяем обязательные поля на клиенте
+            const requiredFields = consultationForm.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    hasErrors = true;
+                    const label = field.previousElementSibling?.textContent || 'Поле';
+                    errorMessages.push(`${label} обязательно для заполнения`);
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            // Если есть ошибки на клиенте - показываем сообщение
+            if (hasErrors) {
+                e.preventDefault(); // Останавливаем стандартную отправку
+                
+                // Показываем сообщение об ошибке
+                messageContainer.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px; color: #721c24;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 1.2rem;"></i>
+                        <div>
+                            <strong>Пожалуйста, заполните форму правильно:</strong>
+                            <ul style="margin: 5px 0 0 20px; padding: 0;">
+                                ${errorMessages.map(msg => `<li>${msg}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                messageContainer.style.display = 'block';
+                messageContainer.style.background = '#f8d7da';
+                messageContainer.style.border = '1px solid #f5c6cb';
+                messageContainer.style.color = '#721c24';
+                
+                // Прокручиваем к сообщению
+                messageContainer.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                return false;
+            }
+            
+            // Если валидация на клиенте прошла, форма отправится на сервер
+            // Но мы все равно перехватываем, чтобы обработать ответ от сервера
+            e.preventDefault(); // Предотвращаем стандартную отправку
+            
+            // Показываем индикатор загрузки
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+            submitBtn.disabled = true;
+            
+            // Отправляем форму через AJAX
+            fetch(consultationForm.action, {
+                method: 'POST',
+                body: new FormData(consultationForm),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // Добавляем заголовок для определения AJAX
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Создаем временный элемент для парсинга ответа
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Ищем сообщения Django
+                const djangoMessages = doc.querySelector('.messages');
+                const formWithErrors = doc.getElementById('style-consultation-form');
+                
+                if (djangoMessages && djangoMessages.querySelector('.alert-error')) {
+                    // Есть ошибки валидации от Django
+                    hasErrors = true;
+                    
+                    // Ищем ошибки в полях формы
+                    const errorFields = formWithErrors.querySelectorAll('.error-text');
+                    if (errorFields.length > 0) {
+                        errorFields.forEach(errorField => {
+                            // Добавляем ошибку в наш список
+                            errorMessages.push(errorField.textContent.trim());
+                        });
+                    }
+                    
+                    // Показываем сообщение об ошибке
+                    messageContainer.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px; color: #721c24;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 1.2rem;"></i>
+                            <div>
+                                <strong>Пожалуйста, исправьте ошибки в форме:</strong>
+                                <ul style="margin: 5px 0 0 20px; padding: 0;">
+                                    ${errorMessages.map(msg => `<li>${msg}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                    messageContainer.style.display = 'block';
+                    messageContainer.style.background = '#f8d7da';
+                    messageContainer.style.border = '1px solid #f5c6cb';
+                    messageContainer.style.color = '#721c24';
+                    
+                    // Также обновляем ошибки в полях на текущей странице
+                    consultationForm.innerHTML = formWithErrors.innerHTML;
+                    
+                } else if (djangoMessages && djangoMessages.querySelector('.alert-success')) {
+                    // УСПЕШНАЯ ОТПРАВКА!
+                    const successMessage = djangoMessages.querySelector('.alert-success').textContent;
+                    
+                    // Показываем сообщение об успехе
+                    messageContainer.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px; color: #155724;">
+                            <i class="fas fa-check-circle" style="font-size: 1.2rem;"></i>
+                            <div>
+                                <strong>${successMessage}</strong>
+                            </div>
+                        </div>
+                    `;
+                    messageContainer.style.display = 'block';
+                    messageContainer.style.background = '#d4edda';
+                    messageContainer.style.border = '1px solid #c3e6cb';
+                    messageContainer.style.color = '#155724';
+                    
+                    // Очищаем форму
+                    consultationForm.reset();
+                    
+                    // Прокручиваем к сообщению
+                    messageContainer.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при отправке формы:', error);
+                messageContainer.innerHTML = `
+                    <div style="color: #721c24;">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.
+                    </div>
+                `;
+                messageContainer.style.display = 'block';
+                messageContainer.style.background = '#f8d7da';
+                messageContainer.style.border = '1px solid #f5c6cb';
+                messageContainer.style.color = '#721c24';
+            })
+            .finally(() => {
+                // Восстанавливаем кнопку
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            });
+        });
+        
+        // Валидация при вводе (реальная)
+        const inputs = consultationForm.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            input.addEventListener('input', function() {
+                clearFieldError(this);
+                // Скрываем общее сообщение при начале ввода
+                messageContainer.style.display = 'none';
+            });
+        });
+    }
+    
+    function validateField(field) {
+        // ... существующая функция validateField из вашего кода ...
+    }
+    
+    function showFieldError(field, message) {
+        // ... существующая функция showFieldError из вашего кода ...
+    }
+    
+    function showFieldSuccess(field) {
+        // ... существующая функция showFieldSuccess из вашего кода ...
+    }
+    
+    function clearFieldError(field) {
+        // ... существующая функция clearFieldError из вашего кода ...
+    }
 });

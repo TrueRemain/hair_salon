@@ -6,7 +6,6 @@ import json
 from .models import Booking
 from .forms import BookingForm
 from datetime import datetime
-from django.shortcuts import render 
 from django.http import HttpResponse 
 from reviews.models import Master, Review  
 from reviews.review_tokens import token_manager 
@@ -15,7 +14,10 @@ from django.contrib import messages
 from .forms import MasterLoginForm
 from .masters_auth import MasterAuth
 from django.utils import timezone 
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden 
+from .forms import StyleConsultationForm 
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator, EmailValidator, ValidationError
+import re
 
 
 def index(request): 
@@ -27,8 +29,59 @@ def index(request):
     return render(request, 'homepage/index.html', {
         'reviews': reviews  # Передаем отзывы в шаблон
     }) 
+
 def catalog(request):
-    return render(request, 'homepage/catalog.html')
+    """Страница услуг с формой консультации"""
+    # here
+    form = StyleConsultationForm()
+
+    if request.method == 'POST':
+        form = StyleConsultationForm(request.POST)
+        if form.is_valid(): 
+            try:
+                # ModelForm автоматически сохраняет в БД при вызове save()
+                consultation = form.save()
+                
+                # Вывод в консоль для отладки
+                print("=== НОВАЯ КОНСУЛЬТАЦИЯ ПО СТИЛЮ ===")
+                print(f"Имя: {consultation.name}")
+                print(f"Телефон: {consultation.phone}")
+                print(f"Email: {consultation.email}")
+                print(f"Возраст: {consultation.age}")
+                print(f"Тип волос: {consultation.get_hair_type_display()}")
+                print(f"Форма лица: {consultation.get_face_shape_display()}")
+                print(f"Текущая стрижка: {consultation.current_style}")
+                print(f"Желаемый образ: {consultation.desired_style}")
+                print(f"Предпочтения: {consultation.preferences}")
+                print(f"Дата создания: {consultation.created_at}")
+                
+                messages.success(request, 'Спасибо! Ваша анкета отправлена.')
+                # тут
+                form = StyleConsultationForm()
+                
+                return redirect('catalog') 
+            # here
+            except Exception as e: 
+                messages.error(
+                    request,
+                    f'Произошла ошибка при сохранении данных. '
+                    f'Пожалуйста, попробуйте еще раз. Ошибка: {str(e)}'
+                ) 
+                # here
+    else:
+        # form = StyleConsultationForm() 
+        # ОШИБКА ВАЛИДАЦИИ: НЕ делаем редирект!
+            # Форма уже содержит ошибки, которые Django отобразит в шаблоне
+            messages.error(
+                request,
+                'Пожалуйста, исправьте ошибки в форме и попробуйте снова.'
+            )
+            # НЕТ return redirect - остаемся на той же странице!
+    
+    return render(request, 'homepage/catalog.html', {
+        'consultation_form': form,
+        'show_form': True
+    })
 
 def about(request):
     return render(request, 'homepage/about.html') 
@@ -59,7 +112,7 @@ def create_booking(request):
             
             return JsonResponse({
                 'success': True,
-                'message': f'✅ Запись успешно оформлена!\n{booking.get_master_display()}\n{booking.get_service_display()}\n{booking.date} в {booking.time.strftime("%H:%M")}',
+                'message': f'Запись успешно оформлена!\n{booking.get_master_display()}\n{booking.get_service_display()}\n{booking.date} в {booking.time.strftime("%H:%M")}',
                 'review_url': review_url
             })
         else:
@@ -306,4 +359,43 @@ def return_to_admin(request):
     
     # Устанавливаем флаг админа
     request.session['is_admin'] = True
-    return redirect('admin_panel')
+    return redirect('admin_panel') 
+
+def style_consultation(request):
+    """Обработка формы консультации по стилю"""
+    if request.method == 'POST':
+        form = StyleConsultationForm(request.POST)
+        if form.is_valid():
+            try:
+                # Сохраняем данные
+                consultation = form.save()
+                
+                # Показываем сообщение об успехе
+                messages.success(
+                    request,
+                    f'Спасибо, {consultation.name}! Ваша анкета успешно отправлена. '
+                    f'Наш стилист свяжется с вами в течение 24 часов.'
+                )
+                
+                # Редирект на ту же страницу с сообщением
+                return redirect('catalog')  # или куда нужно
+                
+            except Exception as e:
+                messages.error(
+                    request,
+                    f'Произошла ошибка при сохранении данных. '
+                    f'Пожалуйста, попробуйте еще раз. Ошибка: {str(e)}'
+                )
+        else:
+            # Показываем ошибки валидации
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{form.fields[field].label}: {error}')
+    else:
+        form = StyleConsultationForm()
+    
+    # Возвращаемся на страницу каталога с формой
+    return render(request, 'homepage/catalog.html', {
+        'consultation_form': form
+    }) 
+
