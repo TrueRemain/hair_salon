@@ -1,6 +1,6 @@
 # homepage/forms.py
 from django import forms
-from .models import Booking, StyleConsultation, MasterAccount
+from .models import Booking, StyleConsultation, MasterAccount, ServiceFeedback
 from django.core.exceptions import ValidationError
 import re
 
@@ -45,6 +45,22 @@ class BookingForm(forms.ModelForm):
             'time': forms.TimeInput(attrs={'type': 'time'}),
         }
     
+    def __init__(self, *args, **kwargs):
+            self.request = kwargs.pop('request', None)
+            super().__init__(*args, **kwargs)
+            
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.request and self.request.user.is_authenticated:
+            instance.user = self.request.user
+            instance.name = self.request.user.get_full_name() or self.request.user.username
+            if self.request.user.phone:
+                instance.phone = self.request.user.phone
+            
+        if commit:
+            instance.save()
+        return instance
+
     def clean(self):
         cleaned_data = super().clean()
         master = cleaned_data.get('master')
@@ -272,4 +288,68 @@ class StyleConsultationForm(forms.ModelForm):
         if len(desired_style) > 1000:
             raise ValidationError('Описание слишком длинное (максимум 1000 символов)')
         
-        return desired_style
+        return desired_style 
+    
+class ServiceFeedbackForm(forms.ModelForm):
+    """Форма опроса о качестве обслуживания"""
+    
+    class Meta:
+        model = ServiceFeedback
+        fields = [
+            'name', 'phone', 'email', 'visit_date',
+            'cleanliness_rating', 'staff_friendliness', 'master_skill',
+            'service_speed', 'price_quality', 'waiting_time',
+            'master_choice', 'service_type', 'would_recommend',
+            'improvements', 'other_comments'
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Иван Иванов (необязательно)'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '+7 (900) 123-45-67 (необязательно)'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'email@example.com (необязательно)'
+            }),
+            'visit_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'waiting_time': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'max': '120',
+                'placeholder': 'Минуты'
+            }),
+            'improvements': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Ваши предложения по улучшению...'
+            }),
+            'other_comments': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Дополнительные пожелания или комментарии...'
+            }),
+        }
+        labels = {
+            'name': 'Ваше имя',
+            'phone': 'Телефон',
+            'email': 'Email',
+            'visit_date': 'Дата посещения',
+            'cleanliness_rating': 'Чистота в салоне',
+            'staff_friendliness': 'Вежливость персонала',
+            'master_skill': 'Профессионализм мастера',
+            'service_speed': 'Скорость обслуживания',
+            'price_quality': 'Соотношение цены и качества',
+            'waiting_time': 'Сколько минут вы ждали мастера?',
+            'master_choice': 'Какого мастера вы посещали?',
+            'service_type': 'Какую услугу вы получали?',
+            'would_recommend': 'Порекомендуете ли вы нас друзьям?',
+            'improvements': 'Что мы можем улучшить?',
+            'other_comments': 'Дополнительные комментарии',
+        }    

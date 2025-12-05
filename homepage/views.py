@@ -18,7 +18,7 @@ from django.http import HttpResponseForbidden
 from .forms import StyleConsultationForm 
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator, EmailValidator, ValidationError
 import re
-
+from .forms import ServiceFeedbackForm
 
 def index(request): 
     # Получаем всех мастеров с рейтингами
@@ -31,55 +31,53 @@ def index(request):
     }) 
 
 def catalog(request):
-    """Страница услуг с формой консультации"""
-    # here
-    form = StyleConsultationForm()
+    """Страница услуг с формами консультации и отзыва"""
+    consultation_form = StyleConsultationForm()
+    feedback_form = ServiceFeedbackForm()
 
     if request.method == 'POST':
-        form = StyleConsultationForm(request.POST)
-        if form.is_valid(): 
-            try:
-                # ModelForm автоматически сохраняет в БД при вызове save()
-                consultation = form.save()
-                
-                # Вывод в консоль для отладки
-                print("=== НОВАЯ КОНСУЛЬТАЦИЯ ПО СТИЛЮ ===")
-                print(f"Имя: {consultation.name}")
-                print(f"Телефон: {consultation.phone}")
-                print(f"Email: {consultation.email}")
-                print(f"Возраст: {consultation.age}")
-                print(f"Тип волос: {consultation.get_hair_type_display()}")
-                print(f"Форма лица: {consultation.get_face_shape_display()}")
-                print(f"Текущая стрижка: {consultation.current_style}")
-                print(f"Желаемый образ: {consultation.desired_style}")
-                print(f"Предпочтения: {consultation.preferences}")
-                print(f"Дата создания: {consultation.created_at}")
-                
-                messages.success(request, 'Спасибо! Ваша анкета отправлена.')
-                # тут
-                form = StyleConsultationForm()
-                
-                return redirect('catalog') 
-            # here
-            except Exception as e: 
+        # Определяем, какая форма была отправлена
+        if 'name' in request.POST and 'phone' in request.POST:  # Консультация по стилю
+            consultation_form = StyleConsultationForm(request.POST)
+            if consultation_form.is_valid():
+                try:
+                    consultation = consultation_form.save()
+                    messages.success(request, 'Спасибо! Ваша анкета отправлена.')
+                    consultation_form = StyleConsultationForm()  # Сбрасываем форму
+                except Exception as e:
+                    messages.error(
+                        request,
+                        f'Произошла ошибка при сохранении данных. '
+                        f'Пожалуйста, попробуйте еще раз.'
+                    )
+            else:
                 messages.error(
                     request,
-                    f'Произошла ошибка при сохранении данных. '
-                    f'Пожалуйста, попробуйте еще раз. Ошибка: {str(e)}'
-                ) 
-                # here
-    else:
-        # form = StyleConsultationForm() 
-        # ОШИБКА ВАЛИДАЦИИ: НЕ делаем редирект!
-            # Форма уже содержит ошибки, которые Django отобразит в шаблоне
-            messages.error(
-                request,
-                'Пожалуйста, исправьте ошибки в форме и попробуйте снова.'
-            )
-            # НЕТ return redirect - остаемся на той же странице!
-    
+                    'Пожалуйста, исправьте ошибки в форме и попробуйте снова.'
+                )
+        
+        elif 'cleanliness_rating' in request.POST:  # Форма отзыва о качестве
+            feedback_form = ServiceFeedbackForm(request.POST)
+            if feedback_form.is_valid():
+                try:
+                    feedback_form.save()
+                    messages.success(request, 'Спасибо за ваш отзыв! Он поможет нам стать лучше.')
+                    feedback_form = ServiceFeedbackForm()  # Сбрасываем форму
+                except Exception as e:
+                    messages.error(
+                        request,
+                        f'Произошла ошибка при сохранении отзыва. '
+                        f'Пожалуйста, попробуйте еще раз.'
+                    )
+            else:
+                messages.error(
+                    request,
+                    'Пожалуйста, исправьте ошибки в форме отзыва.'
+                )
+
     return render(request, 'homepage/catalog.html', {
-        'consultation_form': form,
+        'consultation_form': consultation_form,
+        'feedback_form': feedback_form,  # Добавляем форму в контекст
         'show_form': True
     })
 
@@ -92,7 +90,8 @@ def create_booking(request):
     """Создание новой записи через AJAX"""
     try:
         data = json.loads(request.body)
-        form = BookingForm(data)
+        # form = BookingForm(data)
+        form = BookingForm(data, request=request) 
         
         if form.is_valid():
             booking = form.save()
@@ -399,3 +398,64 @@ def style_consultation(request):
         'consultation_form': form
     }) 
 
+# В homepage/views.txt добавьте эти функции
+
+def service_feedback(request):
+    """Обработка формы опроса о качестве обслуживания"""
+    from .forms import ServiceFeedbackForm
+    
+    if request.method == 'POST':
+        form = ServiceFeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Спасибо за ваш отзыв! Он поможет нам стать лучше.')
+            return redirect('catalog')
+    else:
+        form = ServiceFeedbackForm()
+    
+    return render(request, 'homepage/catalog.html', {
+        'feedback_form': form,
+        'show_feedback_form': True
+    })
+
+def get_feedback_stats(request): 
+    """Получение статистики по отзывам (для AJAX)"""
+    from .models import ServiceFeedback
+    from django.db.models import Avg, Count
+    
+    if not ServiceFeedback.objects.exists():
+        return JsonResponse({'error': 'Нет данных для статистики'})
+    
+    # Статистика по рейтингам
+    stats = {
+        'total_feedbacks': ServiceFeedback.objects.count(),
+        'average_ratings': {
+            'cleanliness': ServiceFeedback.objects.aggregate(Avg('cleanliness_rating'))['cleanliness_rating__avg'],
+            'staff': ServiceFeedback.objects.aggregate(Avg('staff_friendliness'))['staff_friendliness__avg'],
+            'master': ServiceFeedback.objects.aggregate(Avg('master_skill'))['master_skill__avg'],
+            'speed': ServiceFeedback.objects.aggregate(Avg('service_speed'))['service_speed__avg'],
+            'price': ServiceFeedback.objects.aggregate(Avg('price_quality'))['price_quality__avg'],
+        },
+        'average_waiting_time': ServiceFeedback.objects.aggregate(Avg('waiting_time'))['waiting_time__avg'],
+        'recommendation_rate': ServiceFeedback.objects.filter(would_recommend=True).count() / ServiceFeedback.objects.count() * 100,
+        
+        # Распределение по мастерам
+        'masters_distribution': list(ServiceFeedback.objects
+            .exclude(master_choice='')
+            .values('master_choice')
+            .annotate(count=Count('master_choice'))
+            .order_by('-count')),
+        
+        # Распределение по услугам
+        'services_distribution': list(ServiceFeedback.objects
+            .exclude(service_type='')
+            .values('service_type')
+            .annotate(count=Count('service_type'))
+            .order_by('-count')),
+    }
+    
+    # Общий средний рейтинг
+    total_avg = sum(stats['average_ratings'].values()) / len(stats['average_ratings'])
+    stats['overall_average'] = total_avg
+    
+    return JsonResponse(stats)

@@ -1,7 +1,8 @@
 # homepage/models.py
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator, EmailValidator, ValidationError
-import re
+import re 
+from django.conf import settings
 
 class Booking(models.Model):
     MASTER_CHOICES = [
@@ -41,7 +42,24 @@ class Booking(models.Model):
     def __str__(self):
         return f"{self.name} - {self.get_master_display()} - {self.date} {self.time}" 
     
-# Добавьте после существующей модели Booking
+# Добавляем связь с пользователем
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,  # ссылается на вашу кастомную модель
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='user_bookings',
+        verbose_name='Пользователь'
+    )
+    
+    def save(self, *args, **kwargs):
+        """При сохранении записи, если есть аутентифицированный пользователь, связываем"""
+        if not self.pk:  # только для новых записей
+            from django.contrib.auth.models import AnonymousUser
+            request = getattr(self, '_request', None)
+            if request and not isinstance(request.user, AnonymousUser):
+                self.user = request.user
+        super().save(*args, **kwargs)
 
 class MasterAccount(models.Model):
     """Модель для учетных данных мастеров"""
@@ -155,3 +173,94 @@ class StyleConsultation(models.Model):
             elif phone_digits.startswith('7'):
                 phone_digits = '+' + phone_digits
             self.phone = phone_digits
+
+class ServiceFeedback(models.Model):
+    """Модель для отзывов о качестве обслуживания"""
+    
+    RATING_CHOICES = [
+        (1, '1 - Очень плохо'),
+        (2, '2 - Плохо'),
+        (3, '3 - Удовлетворительно'),
+        (4, '4 - Хорошо'),
+        (5, '5 - Отлично'),
+    ]
+    
+    # Информация о клиенте
+    name = models.CharField('Ваше имя', max_length=100, blank=True)
+    phone = models.CharField(
+        'Телефон',
+        max_length=20,
+        validators=[
+            RegexValidator(
+                regex=r'^(\+7|8)[\-\s]?\(?\d{3}\)?[\-\s]?\d{3}[\-\s]?\d{2}[\-\s]?\d{2}$',
+                message='Введите корректный номер телефона'
+            )
+        ],
+        blank=True
+    )
+    email = models.EmailField('Email', blank=True)
+    visit_date = models.DateField('Дата посещения', null=True, blank=True)
+    
+    # Вопросы с рейтингами
+    cleanliness_rating = models.IntegerField('Чистота в салоне', choices=RATING_CHOICES, default=3)
+    staff_friendliness = models.IntegerField('Вежливость персонала', choices=RATING_CHOICES, default=3)
+    master_skill = models.IntegerField('Профессионализм мастера', choices=RATING_CHOICES, default=3)
+    service_speed = models.IntegerField('Скорость обслуживания', choices=RATING_CHOICES, default=3)
+    price_quality = models.IntegerField('Соотношение цены и качества', choices=RATING_CHOICES, default=3)
+    waiting_time = models.IntegerField('Время ожидания (минут)', default=0)  # в минутах
+    
+    # Дополнительные вопросы
+    master_choice = models.CharField(
+        'Какого мастера вы посещали?',
+        max_length=20,
+        choices=Booking.MASTER_CHOICES,
+        blank=True
+    )
+    
+    service_type = models.CharField(
+        'Какую услугу вы получали?',
+        max_length=50,
+        choices=Booking.SERVICE_CHOICES,
+        blank=True
+    )
+    
+    would_recommend = models.BooleanField('Порекомендуете ли вы нас друзьям?', default=True)
+    
+    # Дополнительные поля
+    improvements = models.TextField(
+        'Что мы можем улучшить?',
+        help_text='Ваши предложения по улучшению нашего сервиса',
+        blank=True
+    )
+    
+    other_comments = models.TextField('Дополнительные комментарии', blank=True)
+    
+    created_at = models.DateTimeField('Дата заполнения', auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Отзыв о качестве'
+        verbose_name_plural = 'Отзывы о качестве'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f'Отзыв от {self.name or "Аноним"} - {self.created_at.strftime("%d.%m.%Y")}'
+    
+    @property
+    def average_rating(self):
+        """Средний рейтинг по всем вопросам"""
+        ratings = [
+            self.cleanliness_rating,
+            self.staff_friendliness,
+            self.master_skill,
+            self.service_speed,
+            self.price_quality,
+        ]
+        valid_ratings = [r for r in ratings if r > 0]
+        if valid_ratings:
+            return sum(valid_ratings) / len(valid_ratings)
+        return 0
+    
+    @property
+    def rating_percentage(self):
+        """Рейтинг в процентах"""
+        return (self.average_rating / 5) * 100

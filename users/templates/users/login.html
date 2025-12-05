@@ -1,0 +1,97 @@
+<!-- users/templates/users/login.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Вход - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="auth-section" style="padding: 100px 0; background: var(--accent-color);">
+    <div class="container" style="max-width: 500px;">
+        <div class="auth-card" style="background: var(--white); padding: 2.5rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);">
+            <div class="auth-header" style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-family: var(--font-heading); color: var(--primary-color); font-size: 2.2rem;">
+                    <i class="fas fa-sign-in-alt"></i> Вход
+                </h2>
+                <p style="color: var(--text-light);">Войдите в свой аккаунт</p>
+            </div>
+            
+            {% if messages %}
+            <div style="margin-bottom: 1.5rem;">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_username" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="fas fa-user"></i> Логин или Email
+                    </label>
+                    <input type="text" name="username" id="id_username" class="form-control" 
+                           style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem;"
+                           placeholder="Введите логин или email" required>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label for="id_password" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="fas fa-lock"></i> Пароль
+                    </label>
+                    <input type="password" name="password" id="id_password" class="form-control"
+                           style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem;"
+                           placeholder="Введите пароль" required>
+                </div>
+                
+                <button type="submit" class="cta-button" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </button>
+            </form>
+            
+            <div class="auth-footer" style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+                <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                    Нет аккаунта? 
+                    <a href="{% url 'users:register' %}" style="color: var(--primary-color); font-weight: 600; text-decoration: none;">
+                        Зарегистрироваться
+                    </a>
+                </p>
+                <p style="color: var(--text-light);">
+                    <a href="{% url 'users:password_reset' %}" style="color: var(--text-light); text-decoration: none;">
+                        <i class="fas fa-key"></i> Забыли пароль?
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* Стили для сообщений */
+.alert {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+</style>
+{% endblock %}

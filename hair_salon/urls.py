@@ -24,7 +24,8 @@ urlpatterns = [
     path('catalog/', homepage_views.catalog, name='catalog'),      # ДОБАВЬТЕ
     path('about/', homepage_views.about, name='about'),            # ДОБАВЬТЕ
     path('reviews/', include('reviews.urls')), 
-    path('', include('homepage.urls')),
+    path('users/', include('users.urls', namespace='users')), 
+    path('', include('homepage.urls')), 
 ]
 
 if settings.DEBUG:

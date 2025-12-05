@@ -1,0 +1,200 @@
+<!-- users/profile.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет - {{ user.username }}{% endblock %}
+
+{% block content %}
+<section class="profile-section" style="padding: 100px 0; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <!-- Шапка профиля -->
+        <div class="profile-header" style="background: var(--white); border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+                <!-- Аватар -->
+                <div class="avatar-container">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
+                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color);">
+                    {% else %}
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+                                display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; font-weight: bold;">
+                        {{ user.username|first|upper }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Информация -->
+                <div class="profile-info" style="flex: 1;">
+                    <h1 style="font-family: var(--font-heading); color: var(--text-dark); margin-bottom: 0.5rem;">
+                        {{ user.get_full_name|default:user.username }}
+                    </h1>
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                        <div class="profile-stat">
+                            <span style="font-weight: bold; color: var(--primary-color);">{{ total_bookings }}</span>
+                            <span style="color: var(--text-light);">записей</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span style="font-weight: bold; color: var(--primary-color);">{{ total_consultations }}</span>
+                            <span style="color: var(--text-light);">консультаций</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span style="font-weight: bold; color: var(--primary-color);">{{ total_reviews }}</span>
+                            <span style="color: var(--text-light);">отзывов</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Контактная информация -->
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        {% if user.email %}
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.phone %}
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-phone" style="color: var(--primary-color);"></i>
+                            <span>{{ user.phone }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div class="profile-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="{% url 'users:edit_profile' %}" class="cta-button" style="padding: 0.8rem 1.5rem;">
+                        <i class="fas fa-edit"></i> Редактировать
+                    </a>
+                    <a href="{% url 'users:password_change' %}" class="cta-button secondary" 
+                       style="padding: 0.8rem 1.5rem; background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color);">
+                        <i class="fas fa-key"></i> Сменить пароль
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Текущие записи -->
+        {% if upcoming_bookings %}
+        <div class="bookings-section" style="margin-bottom: 2rem;">
+            <h2 style="font-family: var(--font-heading); color: var(--text-dark); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+                <i class="fas fa-calendar-check" style="color: var(--primary-color);"></i>
+                Ближайшие записи
+            </h2>
+            
+            <div class="bookings-grid" style="display: grid; gap: 1rem;">
+                {% for booking in upcoming_bookings %}
+                <div class="booking-card" style="background: var(--white); border-radius: 15px; padding: 1.5rem; 
+                         box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 4px solid #28a745;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+                        <div>
+                            <h3 style="color: var(--text-dark); margin-bottom: 0.5rem;">
+                                {{ booking.get_service_display }}
+                            </h3>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                                <i class="fas fa-user-tie"></i> {{ booking.get_master_display }}
+                            </p>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+                                      color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; display: inline-block;">
+                                <i class="far fa-clock"></i> {{ booking.date|date:"d.m.Y" }} {{ booking.time|time:"H:i" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- История записей -->
+        {% if past_bookings %}
+        <div class="history-section" style="margin-bottom: 2rem;">
+            <h2 style="font-family: var(--font-heading); color: var(--text-dark); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+                <i class="fas fa-history" style="color: var(--primary-color);"></i>
+                История посещений
+            </h2>
+            
+            <div class="history-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                {% for booking in past_bookings %}
+                <div class="history-card" style="background: var(--white); border-radius: 15px; padding: 1.5rem; 
+                         box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                    <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">
+                        {{ booking.get_service_display }}
+                    </h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--primary-color); font-weight: 600;">
+                            {{ booking.get_master_display }}
+                        </span>
+                        <span style="color: var(--text-light);">
+                            {{ booking.date|date:"d.m.Y" }}
+                        </span>
+                    </div>
+                    <a href="{% url 'reviews:add_review' %}" class="cta-button" style="width: 100%; padding: 0.5rem; font-size: 0.9rem;">
+                        <i class="fas fa-star"></i> Оставить отзыв
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Консультации -->
+        {% if consultations %}
+        <div class="consultations-section">
+            <h2 style="font-family: var(--font-heading); color: var(--text-dark); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+                <i class="fas fa-comments" style="color: var(--primary-color);"></i>
+                Мои консультации по стилю
+            </h2>
+            
+            <div class="consultations-grid" style="display: grid; gap: 1rem;">
+                {% for consultation in consultations %}
+                <div class="consultation-card" style="background: var(--white); border-radius: 15px; padding: 1.5rem; 
+                         box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 4px solid var(--secondary-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">
+                                Консультация от {{ consultation.created_at|date:"d.m.Y" }}
+                            </h4>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                                Тип волос: {{ consultation.get_hair_type_display }}
+                            </p>
+                        </div>
+                        <span style="color: var(--text-light); font-size: 0.9rem;">
+                            {{ consultation.created_at|date:"H:i" }}
+                        </span>
+                    </div>
+                    <div style="color: var(--text-light); font-size: 0.95rem;">
+                        {{ consultation.desired_style|truncatechars:150 }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Если нет данных -->
+        {% if not upcoming_bookings and not past_bookings and not consultations %}
+        <div class="empty-state" style="text-align: center; padding: 4rem 2rem; background: var(--white); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+            <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1.5rem;"></i>
+            <h3 style="font-family: var(--font-heading); color: var(--text-dark); margin-bottom: 1rem;">
+                Ваш профиль пуст
+            </h3>
+            <p style="color: var(--text-light); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                Запишитесь к мастеру, заполните консультацию по стилю или оставьте отзыв, чтобы здесь появилась информация.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/#booking" class="cta-button">
+                    <i class="fas fa-calendar-plus"></i> Записаться
+                </a>
+                <a href="/catalog/#consultation" class="cta-button secondary" 
+                   style="background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color);">
+                    <i class="fas fa-comment-alt"></i> Консультация
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

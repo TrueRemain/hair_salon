@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles', 
     'reviews', 
+    'users', 
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,23 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Добавьте в самый конец файла:
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# Настройки аутентификации
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'users:profile'  # куда перенаправлять после входа
+LOGOUT_REDIRECT_URL = 'index'  # куда перенаправлять после выхода
+
+# Настройки для восстановления пароля
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # для разработки
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'noreply@саша-парикмахерская.рф'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'noreply@саша-парикмахерская.рф'
+# Или файловый бэкенд:
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = '/tmp/app-messages'

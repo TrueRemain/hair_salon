@@ -30,6 +30,39 @@
                     <!--{% url 'reviews:add_review' %} -->
                     <li class="nav-item">
                         <a href="{% url 'reviews:review_info' %}" class="nav-link">Отзывы</a>
+                    </li> 
+                    <!-- Блок для аутентифицированных пользователей -->
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'users:profile' %}" class="nav-link" style="color: var(--primary-color);">
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'users:logout' %}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </a>
+                    </li>
+                    {% else %}
+                    <!-- Блок для гостей -->
+                    <li class="nav-item">
+                        <a href="{% url 'users:login' %}" class="nav-link">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'users:register' %}" class="nav-link cta-button" 
+                        style="padding: 0.5rem 1rem; margin-left: 0.5rem;">
+                            Регистрация
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Для мастеров (ваш существующий код) -->
+                    <li class="nav-item">
+                        <a href="{% url 'master_login' %}" class="nav-link">
+                            <i class="fas fa-user-tie"></i> Для мастеров
+                        </a>
                     </li>
                 </ul>
                 <div class="hamburger">

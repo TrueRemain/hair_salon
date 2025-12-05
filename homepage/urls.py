@@ -1,7 +1,6 @@
 # homepage/urls.py
 
 # Импортируем функцию path для определения маршрутов
-from django.urls import path
 from . import views 
 from django.contrib import admin
 from django.urls import path, include
@@ -26,12 +25,12 @@ def debug_urls(request):
 urlpatterns = [
     # Если пользователь зайдет на корневой адрес ('' - пустая строка),
     # то нужно вызвать функцию index из файла views.py
-    path('', views.index, name='index'), 
     path('admin/', admin.site.urls),
     #path('', homepage_views.index, name='index'),  # Главная страница
     path('reviews/', include('reviews.urls')),     # ВСЕ маршруты отзывов 
     path('api/booking/create/', views.create_booking, name='create_booking'),
     path('api/booking/slots/', views.get_available_time_slots, name='get_slots'), 
+    path('api/feedback/stats/', views.get_feedback_stats, name='feedback_stats'),
     path('debug/', debug_urls, name='debug_urls'), 
     # для личного кабинета
     path('masters/login/', views.master_login, name='master_login'),
@@ -41,7 +40,11 @@ urlpatterns = [
     path('masters/switch/<str:master_code>/', views.switch_to_master, name='switch_to_master'),
     path('masters/return-admin/', views.return_to_admin, name='return_to_admin'),
     path('masters/logout/', views.master_logout, name='master_logout'), 
-    path('catalog/style-consultation/', views.style_consultation, name='style_consultation'),
+    path('catalog/style-consultation/', views.style_consultation, name='style_consultation'), 
+    path('feedback/submit/', views.service_feedback, name='service_feedback'), 
+    path('style_consultation/', views.style_consultation, name='style_consultation'),
+    path('service_feedback/', views.service_feedback, name='service_feedback'), 
+    path('', views.index, name='index'), 
 ] 
 
 if settings.DEBUG:

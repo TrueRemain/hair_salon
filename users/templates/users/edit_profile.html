@@ -1,0 +1,181 @@
+<!-- templates/users/edit_profile.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактирование профиля - Парикмахерская "Дядя Саша"{% endblock %}
+
+{% block content %}
+<section class="auth-section" style="padding: 100px 0; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container" style="max-width: 600px;">
+        <div class="auth-card" style="background: var(--white); padding: 2.5rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);">
+            <div class="auth-header" style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-family: var(--font-heading); color: var(--primary-color); font-size: 2.2rem;">
+                    <i class="fas fa-user-edit"></i> Редактирование профиля
+                </h2>
+                <p style="color: var(--text-light);">Обновите информацию о себе</p>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data" class="auth-form">
+                {% csrf_token %}
+                
+                {% if messages %}
+                <div style="margin-bottom: 1.5rem;">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="avatar-upload" style="text-align: center; margin-bottom: 2rem;">
+                    {% if user.avatar %}
+                    <img id="avatar-preview" src="{{ user.avatar.url }}" alt="{{ user.username }}" 
+                         style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color); margin-bottom: 1rem;">
+                    {% else %}
+                    <div id="avatar-preview" style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+                                display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; font-weight: bold; margin: 0 auto 1rem;">
+                        {{ user.username|first|upper }}
+                    </div>
+                    {% endif %}
+                    <label for="id_avatar" class="cta-button" style="display: inline-block; padding: 0.8rem 1.5rem; cursor: pointer;">
+                        <i class="fas fa-camera"></i> Изменить фото
+                    </label>
+                    <input type="file" name="avatar" id="id_avatar" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="form-group">
+                        <label for="id_first_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                            <i class="fas fa-user"></i> Имя
+                        </label>
+                        <input type="text" name="first_name" id="id_first_name" class="form-control" 
+                               value="{{ user.first_name|default:'' }}"
+                               style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_last_name" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                            <i class="fas fa-user"></i> Фамилия
+                        </label>
+                        <input type="text" name="last_name" id="id_last_name" class="form-control" 
+                               value="{{ user.last_name|default:'' }}"
+                               style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem;">
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_email" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input type="email" name="email" id="id_email" class="form-control" 
+                           value="{{ user.email|default:'' }}" required
+                           style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_phone" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="fas fa-phone"></i> Телефон
+                    </label>
+                    <input type="text" name="phone" id="id_phone" class="form-control" 
+                           value="{{ user.phone|default:'' }}"
+                           placeholder="+7 (900) 123-45-67"
+                           style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label for="id_preferences" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="fas fa-cut"></i> Предпочтения в стрижках
+                    </label>
+                    <textarea name="preferences" id="id_preferences" class="form-control" 
+                              rows="4" placeholder="Напишите, какие стрижки вам нравятся, какие предпочитаете стили и т.д."
+                              style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem;">{{ user.preferences|default:'' }}</textarea>
+                </div>
+                
+                <button type="submit" class="cta-button" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    <i class="fas fa-save"></i> Сохранить изменения
+                </button>
+            </form>
+            
+            <div class="auth-footer" style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+                <a href="{% url 'users:profile' %}" style="color: var(--text-light); text-decoration: none;">
+                    <i class="fas fa-arrow-left"></i> Вернуться в профиль
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Стили для сообщений */
+.alert {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Предпросмотр аватарки
+    const avatarInput = document.getElementById('id_avatar');
+    const avatarPreview = document.getElementById('avatar-preview');
+    
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (avatarPreview.tagName === 'IMG') {
+                    avatarPreview.src = e.target.result;
+                } else {
+                    // Если это div, заменяем на img
+                    const img = document.createElement('img');
+                    img.id = 'avatar-preview';
+                    img.src = e.target.result;
+                    img.style = 'width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color); margin-bottom: 1rem;';
+                    avatarPreview.parentNode.replaceChild(img, avatarPreview);
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Маска для телефона
+    const phoneInput = document.getElementById('id_phone');
+    phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 0) {
+            if (!value.startsWith('7') && !value.startsWith('8')) {
+                value = '7' + value;
+            }
+            const formatted = '+7 (' + value.substring(1, 4) + ') ' + value.substring(4, 7) + '-' + value.substring(7, 9) + '-' + value.substring(9, 11);
+            e.target.value = formatted.substring(0, 18);
+        }
+    });
+});
+</script>
+{% endblock %}

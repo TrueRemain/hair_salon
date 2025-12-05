@@ -2732,7 +2732,43 @@ input:focus, textarea:focus, select:focus {
 
 #form-validation-message li {
     margin-bottom: 5px;
+} 
+
+/* Дополнительные стили для опроса */
+.rating-item {
+    margin-bottom: 15px;
 }
+
+.rating-label {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.no-data, .error {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+}
+
+.no-data i, .error i {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.error i {
+    color: #dc3545;
+}
+
+/* Анимация для статистики */
+@keyframes fillBar {
+    from { width: 0; }
+    to { width: var(--target-width); }
+}
+
 
 @keyframes fadeIn {
     from {

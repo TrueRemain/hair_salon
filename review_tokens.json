@@ -46,5 +46,52 @@
     "created_at": "2025-12-01T14:53:51.739186",
     "expires_at": "2025-12-08T14:53:51.739186",
     "used": false
+  },
+  "d54433052b91dc134726": {
+    "phone": "+79531865336",
+    "client_name": "Иван",
+    "master_code": "alexander",
+    "booking_id": 1,
+    "created_at": "2025-12-04T04:32:16.900518",
+    "expires_at": "2025-12-11T04:32:16.900518",
+    "used": false
+  },
+  "330affd3b109fb6818c9": {
+    "phone": "+79531865336",
+    "client_name": "Иван",
+    "master_code": "alexander",
+    "booking_id": 2,
+    "created_at": "2025-12-04T04:33:23.525754",
+    "expires_at": "2025-12-11T04:33:23.525754",
+    "used": false
+  },
+  "dc865b51f3e8bc5febb8": {
+    "phone": "+79531865336",
+    "client_name": "Иван",
+    "master_code": "alexander",
+    "booking_id": 3,
+    "created_at": "2025-12-04T04:41:06.669837",
+    "expires_at": "2025-12-11T04:41:06.669837",
+    "used": true,
+    "used_at": "2025-12-04T04:41:15.968601"
+  },
+  "ead291b75b4ee56f9185": {
+    "phone": "+79001234567",
+    "client_name": "Иван Иванов",
+    "master_code": "alexander",
+    "booking_id": 4,
+    "created_at": "2025-12-04T16:58:00.948915",
+    "expires_at": "2025-12-11T16:58:00.948915",
+    "used": true,
+    "used_at": "2025-12-04T16:58:15.892519"
+  },
+  "f037c3053a3bee6799ca": {
+    "phone": "+79001234567",
+    "client_name": "Иван Иванов",
+    "master_code": "alexander",
+    "booking_id": 5,
+    "created_at": "2025-12-04T17:04:15.360809",
+    "expires_at": "2025-12-11T17:04:15.360809",
+    "used": false
   }
 }
